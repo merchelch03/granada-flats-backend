@@ -44,9 +44,13 @@ public class GranadaFlatsController {
     }
 
     @PostMapping("/estudiantes")
-    public ResponseEntity<Estudiante> registrarEstudiante(@Valid @RequestBody Estudiante estudiante) {
+    public ResponseEntity<?> registrarEstudiante(@Valid @RequestBody Estudiante estudiante) {
         System.out.println("Registrando estudiante: " + estudiante.getEmail());
-        // En un caso real, aquí cifraríamos la contraseña con BCrypt
+        
+        if (estudianteRepository.findByEmail(estudiante.getEmail()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("El correo electrónico ya está registrado");
+        }
+        
         return ResponseEntity.ok(estudianteRepository.save(estudiante));
     }
 
@@ -72,6 +76,10 @@ public class GranadaFlatsController {
     public ResponseEntity<?> crearPiso(@RequestBody Piso piso, @RequestParam Long estudianteId) {
         System.out.println("Creando piso para estudianteId: " + estudianteId);
         try {
+            if (pisoRepository.findByDireccion(piso.getDireccion()).isPresent()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Ya existe un piso registrado con esta dirección");
+            }
+
             Estudiante estudiante = estudianteRepository.findById(estudianteId)
                 .orElseThrow(() -> new RuntimeException("Estudiante no encontrado: " + estudianteId));
             

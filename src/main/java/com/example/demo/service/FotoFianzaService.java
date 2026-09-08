@@ -18,9 +18,11 @@ public class FotoFianzaService {
     }
 
     public FotoFianza registrarYSellarFoto(Piso piso, Estudiante estudiante, String estancia, String descripcion, MultipartFile archivo) throws Exception {
+        byte[] bytes = archivo.getBytes();
+        
         // 1. Calcular Hash SHA-256 en el backend
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] hashBytes = digest.digest(archivo.getBytes());
+        byte[] hashBytes = digest.digest(bytes);
         
         StringBuilder hexString = new StringBuilder();
         for (byte b : hashBytes) {
@@ -30,7 +32,7 @@ public class FotoFianzaService {
         }
         String sha256Hash = hexString.toString();
 
-        // 2. Simulación de guardado de archivo físico / Cloud Storage
+        // 2. URL simulada
         String urlSimulada = "/uploads/fianza/" + System.currentTimeMillis() + "_" + archivo.getOriginalFilename();
 
         // 3. Crear entidad con sello de tiempo del servidor
@@ -39,6 +41,7 @@ public class FotoFianzaService {
         foto.setEstudiante(estudiante);
         foto.setEstancia(estancia);
         foto.setDescripcion(descripcion);
+        foto.setDatosImagen(bytes); // Guardamos los bytes reales en la DB para el TFG
         foto.setUrlImagen(urlSimulada);
         foto.setCodigoHashSha256(sha256Hash);
         foto.setTimestampServidor(LocalDateTime.now());

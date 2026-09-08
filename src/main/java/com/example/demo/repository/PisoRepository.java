@@ -8,4 +8,5 @@ import java.util.Optional;
 @Repository
 public interface PisoRepository extends JpaRepository<Piso, Long> {
     Optional<Piso> findByCodigoInvitacion(String codigoInvitacion);
+    Optional<Piso> findByDireccion(String direccion);
 }
