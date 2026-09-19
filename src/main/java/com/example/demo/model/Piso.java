@@ -13,6 +13,7 @@ public class Piso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String direccion;
     private String codigoInvitacion;
 
